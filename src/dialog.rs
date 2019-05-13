@@ -64,6 +64,27 @@ impl<'a: 'b, 'b, T: 'a> DialogBuilder<'a, 'b, T> {
         })
     }
 
+    /// Saves a new open file dialog and returns the chosen file path.
+    pub fn save_file<S, P>(&mut self, title: S, default_file: P) -> WVResult<Option<PathBuf>>
+    where
+        S: Into<String>,
+        P: Into<PathBuf>,
+    {
+        self.dialog(
+            title.into(),
+            default_file.into().to_string_lossy().into_owned(),
+            DialogType::Save,
+            DialogFlags::FILE,
+        )
+        .map(|path| {
+            if path.is_empty() {
+                None
+            } else {
+                Some(PathBuf::from(path))
+            }
+        })
+    }
+
     /// Opens a new choose directory dialog as returns the chosen directory path.
     pub fn choose_directory<S, P>(
         &mut self,
